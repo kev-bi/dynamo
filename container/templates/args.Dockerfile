@@ -22,7 +22,7 @@ ARG ARCH_ALT={{ "x86_64" if platform == "amd64" else "aarch64" }}
 # Python/CUDA configuration
 ARG PYTHON_VERSION={{ context.dynamo.python_version }}
 ARG CUDA_VERSION={{ cuda_version }}
-ARG CUDA_MAJOR=${CUDA_VERSION%%.*}
+ARG CUDA_MAJOR={{ cuda_version.split('.')[0] }}
 
 # Base and runtime images configuration
 {% set cuda_context_key = "cuda" + cuda_version %}
@@ -87,7 +87,7 @@ ARG HAS_TRTLLM_CONTEXT={{ context.trtllm.has_trtllm_context }}
 ARG TENSORRTLLM_PIP_WHEEL={{ context.trtllm.pip_wheel }}
 ARG TENSORRTLLM_INDEX_URL={{ context.trtllm.index_url }}
 ARG GITHUB_TRTLLM_COMMIT={{ context.trtllm.github_trtllm_commit }}
-ARG TRTLLM_WHEEL_IMAGE={{ context.trtllm.trtllm_wheel_image }}
+ARG TRTLLM_WHEEL_IMAGE=nvcr.io/nvidia/tensorrt-llm/release:{{ context.trtllm.pip_wheel.split('==')[-1] }}
 
 # Copy pytorch installation from NGC PyTorch
 ARG FLASHINFER_PYTHON_VER={{ context.trtllm.flashinfer_python_ver }}

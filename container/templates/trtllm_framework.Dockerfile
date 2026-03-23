@@ -11,8 +11,19 @@ FROM ${BASE_IMAGE}:${BASE_IMAGE_TAG} AS pytorch_base
 FROM alpine:3.20 AS trtllm_wheel_image_empty
 RUN mkdir -p /app/tensorrt_llm
 
-# Resolve TRTLLM wheel image (can be a stage name or a registry image)
+# Resolve TRTLLM wheel image (skip pull when using local wheel from build context)
+{% if context.trtllm.has_trtllm_context == "1" %}
+FROM alpine:3.20 AS trtllm_wheel_image
+RUN mkdir -p /app/tensorrt_llm
+{% else %}
 FROM ${TRTLLM_WHEEL_IMAGE} AS trtllm_wheel_image
+{% endif %}
+
+{% if context.trtllm.has_trtllm_context == "1" %}
+# Local wheel from build context: copy your .whl into container/trtllm_wheel/ before building
+FROM alpine:3.20 AS trtllm_wheel
+COPY container/trtllm_wheel/ /
+{% endif %}
 
 ##################################################
 ########## Framework Builder Stage ##############
